@@ -1,0 +1,78 @@
+todo-vuejs
+
+  1. 新建app.js，创建vue实例
+  2. 为页面输入框（.new-todo）绑定监控
+    1） 添加回车监听 @click.enter
+    2)  绑定输入框的值v-model=“newTodo”，方便在应用方法中用this.newTodo获取
+
+  3.为vue实例添加“新建任务”方法
+    1) 有效性验证
+
+    2) 添加到数据库
+
+    3) 清空输入框
+
+  4. 新建store.js，添加todoStorage对象，管理数据的添加和存储(简化)
+    1） 声明一个全局的storageKey，为应用数据标志
+    2） 提供fetch方法
+    3） 提供save方法
+
+  5. vue实例的数据，todos初始值修改为动态值(简化)
+      data:{
+        todos : todoStorage.fetch()
+      }
+
+  6. 页面任务列表（.todo-list）下，每一项改为动态修改
+      1) <li v-for="(todo,index) in todos">...
+      2) 完善动态模板内容
+
+  7. 为删除按钮添加方法
+      <button class="destroy" @click="removeTodo(index)"></button>
+
+  8. 为完成按钮添加方法
+    <input class="toggle" type="checkbox" v-model="todo.completed" @click="changeTaskState">
+
+  9.修改列表项，根据completed属性的变化，动态添加样式
+    <li :class="{completed:todo.completed}"
+
+  10.完成3种过滤
+      1) 新建过滤状态属性
+          visiable
+      2） 新建过滤对象
+      var filter = {
+          all(todos){
+            console.log('all:',todos);
+            return todos;
+          },
+          // 活动，没有完成
+          active(todos){
+            // console.log('active:',todos,todos.filter((todo) => {!todo.completed})); // 箭头函数后面有括号，就必须有return
+            return todos.filter((todo) => !todo.completed);
+          },
+          // 已完成
+          completed(todos){
+            // console.log('completed:',todos,todos.filter((todo) => {!todo.completed}));
+            return todos.filter((todo) => todo.completed)
+          }
+        }
+
+      3） 提供过滤方法
+          changeVisiable(newState){
+              this.visiable = newState;
+          }
+
+      4） 为页面标题添加方法和动态样式
+          <ul class="filters">
+            <li><a href="#" :class="{selected: visiable==='all'}" @click="changeVisiable('all')">All</a></li>
+            <li><a href="#" :class="{selected: visiable==='active'}" @click="changeVisiable('active')" >Active</a></li>
+            <li><a href="#" :class="{selected: visiable==='completed'}" @click="changeVisiable('completed')" >Completed</a></li>
+          </ul>
+
+
+      5） 修改页面显示为过滤的计算属性
+          computed: {
+              filterTodos(){
+                // 根据当前的可视化属性值，过滤不同的数据
+                return filter[this.visiable](this.todos);
+              }
+          }
